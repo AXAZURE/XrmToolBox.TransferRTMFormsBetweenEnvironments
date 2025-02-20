@@ -1,0 +1,8 @@
+﻿################################################################################
+# Este archivo .gitignore ha sido creado automáticamente por Microsoft(R) Visual Studio.
+################################################################################
+
+/XrmToolBox.TransferFormsRTMEnvironments/bin/Debug
+/XrmToolBox.TransferFormsRTMEnvironments/obj/Debug
+/XrmToolBox.TransferFormsRTMEnvironments/.vs
+/.vs
