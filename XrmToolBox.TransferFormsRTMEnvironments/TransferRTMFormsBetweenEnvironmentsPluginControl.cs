@@ -29,14 +29,9 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
 
         const string FORM_STATUS_UPDATED = "It will be updated";
         const string FORM_STATUS_NEW = "It will be created";
-        const string FORM_STATUS_EXIST = "Exists in target";
+        const string FORM_STATUS_NOTCONNECT_TARGET = "Target pending";
 
-        private enum ServiceType
-        {
-            Source,
-            Target
-        }
-
+        const string DONATION_BTN_ID = "HDBPHYMTQMUUA";
 
         public TransferRTMFormsBetweenEnvironmentsPluginControl()
         {
@@ -52,7 +47,7 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
             {
                 mySettings = new Settings();
 
-                prepare();
+                Prepare();
                 //LogWarning("Settings not found => a new settings file has been created!");
             }
             else
@@ -72,32 +67,29 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
             GetForms(false);
         }
 
-        private void prepare()
+        private void Prepare()
         {
             int w = (this.ParentForm.Width / 2) - 15;
             gb_SourceForms.Width = w;
             gb_TargetForms.Width = w;
             gb_environments.Width = w;
             gb_settings.Width = w;
-            p_FormsSourceStatus.Width = w;
-            p_FormsTargetStatus.Width = w;
 
             //Source forms
             int wSourceForms = ((gb_SourceForms.ClientSize.Width - GetVScrollBarWidth()) / 2) - 100;
 
             lv_SourceForms.Columns.Clear();
             lv_SourceForms.Columns.Add("Form Name", wSourceForms);
-            lv_SourceForms.Columns.Add("Form Relation", wSourceForms);
+            lv_SourceForms.Columns.Add("Form Redirect", wSourceForms);
             lv_SourceForms.Columns.Add("Form Status", 100);
             lv_SourceForms.Columns.Add("Comparer Status", 100);
 
             //Target forms
-
             int wTargetForms = ((gb_TargetForms.ClientSize.Width - GetVScrollBarWidth()) / 2) - 100;
 
             lv_TargetForms.Columns.Clear();
             lv_TargetForms.Columns.Add("Form Name", wTargetForms);
-            lv_TargetForms.Columns.Add("Form Relation", wTargetForms);
+            lv_TargetForms.Columns.Add("Form Redirect", wTargetForms);
             lv_TargetForms.Columns.Add("Form Status", 100);
             lv_TargetForms.Columns.Add("Transfer Status", 100);
 
@@ -111,6 +103,24 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                 l_environmentSourceValue.Text = "Pending selected";
                 l_environmentSourceValue.ForeColor = Color.Red;
             }
+        }
+
+        private void SummaryStatus()
+        {
+            //Forms Source
+            l_FormsSourceStatus.Text = $"Comparer status forms : Source: {_sourceForms.Count}";
+
+            if(_targetForms != null && _targetForms.Count > 0)
+            {
+                l_FormsSourceStatus.Text += $" - Target: {_targetForms.Count}";
+                p_FormsSourceStatus.BackColor = Color.Yellow;
+            }
+            else
+            {
+                p_FormsSourceStatus.BackColor = Color.White;
+            }
+
+            l_FormsSourceStatus.Text += $" || Will be created: {_sourceForms.Select(k => k.SubItems[3]).Where(s => s.Text == FORM_STATUS_NEW).Count()} - Will be Updated: {_sourceForms.Select(k => k.SubItems[3]).Where(s => s.Text == FORM_STATUS_UPDATED).Count()}";
         }
 
         private int GetVScrollBarWidth()
@@ -128,14 +138,12 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                 var openSelectedSource = MessageBox.Show("Do you want to reload the forms from the source environment?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if(openSelectedSource == DialogResult.No)
                 {
-                    loadSourceForms = false;
-                    
+                    loadSourceForms = false;                    
                 }           
             }
 
             if (loadSourceForms)
             {
-                lv_SourceForms.Items.Clear();
                 _sourceForms.Clear();
 
                 WorkAsync(new WorkAsyncInfo
@@ -180,7 +188,7 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                                         }
                                     }
 
-                                    _sourceForms.Add(new ListViewItem(new string[] { entity.Attributes["msdynmkt_name"].ToString(), string.IsNullOrEmpty(formRelation) ? "" : formRelation, entity.FormattedValues["statuscode"].ToString(), FORM_STATUS_EXIST }) { ForeColor = Color.Red });
+                                    _sourceForms.Add(new ListViewItem(new string[] { entity.Attributes["msdynmkt_name"].ToString(), string.IsNullOrEmpty(formRelation) ? "" : formRelation, entity.FormattedValues["statuscode"].ToString(), FORM_STATUS_NOTCONNECT_TARGET }) { ForeColor = Color.Red });
                                 }
                             }
                         }
@@ -197,12 +205,12 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                         {
                             MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
-                        var result = args.Result as EntityCollection;
-                        if (result != null)
-                        {
-                            //lv_SourceForms.Items.AddRange(_sourceForms.OrderBy(k => k.Text).ToArray());
-                            //MessageBox.Show($"Found {result.Entities.Count} forms");
-                        }
+                        //var result = args.Result as EntityCollection;
+                        //if (result != null)
+                        //{
+                        //    //lv_SourceForms.Items.AddRange(_sourceForms.OrderBy(k => k.Text).ToArray());
+                        //    //MessageBox.Show($"Found {result.Entities.Count} forms");
+                        //}
                     }
                 });
             }
@@ -213,14 +221,17 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                 if (openSelectedSource == DialogResult.No)
                 {
                     loadTargetForms = false;
-                    if(_sourceForms.Count > 0)
+                    if (_sourceForms.Count > 0)
+                    {
+                        lv_SourceForms.Items.Clear();
                         lv_SourceForms.Items.AddRange(_sourceForms.OrderBy(k => k.Text).ToArray());
+                        lv_SourceForms.Items.Cast<ListViewItem>().All(k => k.Checked = true);
+                    }
                 }
             }
 
             if (_targetService != null && loadTargetForms)
             {
-                lv_TargetForms.Items.Clear();
                 _targetForms.Clear();
 
                 WorkAsync(new WorkAsyncInfo
@@ -299,36 +310,77 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                         {
                             MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
-                        var result = args.Result as EntityCollection;
-                        if (result != null)
-                        {
-                            lv_TargetForms.Items.AddRange(_targetForms.OrderBy(k => k.Text).ToArray());
 
-                            //lv_SourceForms.Clear();
-                            //Mark Form in Source if exist or new
-                            foreach (var itemSource in _sourceForms)
-                            {
-                                var exist = _targetForms.Select(k => k.Text).ToList().Exists(k => k == itemSource.Text);
-                                if (!exist)
-                                {
-                                    itemSource.ForeColor = Color.Green;
-                                    itemSource.SubItems[2].Text = FORM_STATUS_NEW;
-                                }
-                            }
-                            lv_SourceForms.Items.AddRange(_sourceForms.OrderBy(k => k.Text).ToArray());
-                        }
+                        SetComparerFormsSourceFromTarget();
                     }
                 });
             }
             else
             {
-                var openSelectedTarget = MessageBox.Show("Do you want to select a target environment?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (openSelectedTarget == DialogResult.Yes)
+                if (loadTargetForms)
                 {
-                    AddAdditionalOrganization();
-                    GetForms(true);
+                    var openSelectedTarget = MessageBox.Show("Do you want to select a target environment?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (openSelectedTarget == DialogResult.Yes)
+                    {
+                        AddAdditionalOrganization();
+                        GetForms(true);
+                    }
                 }
+
+                SetComparerFormsSourceFromTarget();
             }
+        }
+
+        private void SetComparerFormsSourceFromTarget()
+        {
+            //Target
+            if (_targetForms != null && _targetForms.Count > 0)
+            {
+                lv_TargetForms.Items.Clear();
+
+                bt_TransferForms.Enabled = true;
+
+                lv_TargetForms.Items.AddRange(_targetForms.OrderBy(k => k.Text).ToArray());
+
+                //Mark Form in Source if exist or new
+                foreach (var itemSource in _sourceForms)
+                {
+                    var exist = _targetForms.Select(k => k.Text).ToList().Exists(k => k == itemSource.Text);
+                    if (!exist)
+                    {
+                        itemSource.ForeColor = Color.Green;
+                        itemSource.SubItems[3].Text = FORM_STATUS_NEW;
+                    }
+                    else
+                    {
+                        itemSource.ForeColor = Color.Black;
+                        itemSource.SubItems[3].Text = FORM_STATUS_UPDATED;
+                    }
+                }
+                lv_SourceForms.Items.Clear();
+                lv_SourceForms.Items.AddRange(_sourceForms.OrderBy(k => k.Text).ToArray());
+                lv_SourceForms.Items.Cast<ListViewItem>().All(k => k.Checked = true);
+            }
+            else
+            {
+                //Source
+                //Reset color in Forms items in Source without Target
+                if (_sourceForms.Count > 0)
+                {
+                    foreach (var itemSource in _sourceForms)
+                    {
+                        itemSource.ForeColor = Color.Black;
+                    }
+
+                    lv_SourceForms.Items.Clear();
+                    lv_SourceForms.Items.AddRange(_sourceForms.OrderBy(k => k.Text).ToArray());
+                    lv_SourceForms.Items.Cast<ListViewItem>().All(k => k.Checked = true);
+                }
+
+                bt_TransferForms.Enabled = false;
+            }
+
+            SummaryStatus();
         }
 
         /// <summary>
@@ -354,7 +406,7 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                 mySettings.LastUsedOrganizationWebappUrl = detail.WebApplicationUrl;
                 LogInfo("Connection has changed to: {0}", detail.WebApplicationUrl);
                 l_environmentSourceValue.ForeColor = Color.Green;
-                prepare();
+                Prepare();
             }
         }
 
@@ -366,7 +418,7 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
 
         private void TransferRTMFormsBetweenEnvironmentsPluginControl_Resize(object sender, EventArgs e)
         {
-            prepare();
+            Prepare();
         }
 
         private void bt_SelectTarget_Click(object sender, EventArgs e)
@@ -387,9 +439,33 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
             }
         }
 
-        private void l_FormsSourceStatus_Click(object sender, EventArgs e)
+        private void bt_Donate_Click(object sender, EventArgs e)
         {
+            var url = string.Format("https://www.paypal.com/donate/?hosted_button_id={0}", DONATION_BTN_ID);
+            Process.Start(url);
+        }
 
+        private void bt_TransferForms_Click(object sender, EventArgs e)
+        {
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Transfer forms selected",
+                Work = (worker, args) =>
+                {
+                   
+                    
+
+                    //args.Result = formsTarget;
+                },
+                PostWorkCallBack = (args) =>
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    GetForms(false);
+                }
+            });
         }
     }
 }

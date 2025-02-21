@@ -34,42 +34,40 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbClose = new System.Windows.Forms.ToolStripButton();
             this.tssSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.bt_TransferForms = new System.Windows.Forms.ToolStripButton();
             this.p_control = new System.Windows.Forms.Panel();
+            this.p_Forms = new System.Windows.Forms.Panel();
+            this.p_ListViewForms = new System.Windows.Forms.Panel();
+            this.gb_SourceForms = new System.Windows.Forms.GroupBox();
+            this.lv_SourceForms = new System.Windows.Forms.ListView();
+            this.gb_TargetForms = new System.Windows.Forms.GroupBox();
+            this.lv_TargetForms = new System.Windows.Forms.ListView();
+            this.p_Status = new System.Windows.Forms.Panel();
+            this.p_FormsSourceStatus = new System.Windows.Forms.Panel();
+            this.l_FormsSourceStatus = new System.Windows.Forms.Label();
             this.p_settings = new System.Windows.Forms.Panel();
             this.gb_settings = new System.Windows.Forms.GroupBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.cb_TransfersInDraft = new System.Windows.Forms.CheckBox();
+            this.cb_transfersFormRedirect = new System.Windows.Forms.CheckBox();
+            this.cb_TransfersFormsInDraft = new System.Windows.Forms.CheckBox();
             this.gb_environments = new System.Windows.Forms.GroupBox();
             this.p_environmentSources = new System.Windows.Forms.Panel();
             this.l_environmentSourceValue = new System.Windows.Forms.Label();
             this.l_environmentSource = new System.Windows.Forms.Label();
             this.l_environmentTargetValue = new System.Windows.Forms.Label();
             this.bt_SelectTarget = new System.Windows.Forms.Button();
-            this.bt_TransferForms = new System.Windows.Forms.ToolStripButton();
-            this.p_ListViewForms = new System.Windows.Forms.Panel();
-            this.gb_TargetForms = new System.Windows.Forms.GroupBox();
-            this.lv_TargetForms = new System.Windows.Forms.ListView();
-            this.gb_SourceForms = new System.Windows.Forms.GroupBox();
-            this.lv_SourceForms = new System.Windows.Forms.ListView();
-            this.p_Forms = new System.Windows.Forms.Panel();
-            this.p_FormsTargetStatus = new System.Windows.Forms.Panel();
-            this.l_FormsTargetStatus = new System.Windows.Forms.Label();
-            this.p_FormsSourceStatus = new System.Windows.Forms.Panel();
-            this.l_FormsSourceStatus = new System.Windows.Forms.Label();
-            this.p_Status = new System.Windows.Forms.Panel();
+            this.bt_Donate = new System.Windows.Forms.ToolStripButton();
             this.toolStripMenu.SuspendLayout();
             this.p_control.SuspendLayout();
+            this.p_Forms.SuspendLayout();
+            this.p_ListViewForms.SuspendLayout();
+            this.gb_SourceForms.SuspendLayout();
+            this.gb_TargetForms.SuspendLayout();
+            this.p_Status.SuspendLayout();
+            this.p_FormsSourceStatus.SuspendLayout();
             this.p_settings.SuspendLayout();
             this.gb_settings.SuspendLayout();
             this.gb_environments.SuspendLayout();
             this.p_environmentSources.SuspendLayout();
-            this.p_ListViewForms.SuspendLayout();
-            this.gb_TargetForms.SuspendLayout();
-            this.gb_SourceForms.SuspendLayout();
-            this.p_Forms.SuspendLayout();
-            this.p_FormsTargetStatus.SuspendLayout();
-            this.p_FormsSourceStatus.SuspendLayout();
-            this.p_Status.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripMenu
@@ -80,10 +78,11 @@
             this.toolStripSeparator1,
             this.tsbClose,
             this.tssSeparator1,
-            this.bt_TransferForms});
+            this.bt_TransferForms,
+            this.bt_Donate});
             this.toolStripMenu.Location = new System.Drawing.Point(0, 0);
             this.toolStripMenu.Name = "toolStripMenu";
-            this.toolStripMenu.Size = new System.Drawing.Size(838, 25);
+            this.toolStripMenu.Size = new System.Drawing.Size(838, 31);
             this.toolStripMenu.TabIndex = 4;
             this.toolStripMenu.Text = "toolStrip1";
             // 
@@ -93,27 +92,38 @@
             this.bt_LoadForms.Image = ((System.Drawing.Image)(resources.GetObject("bt_LoadForms.Image")));
             this.bt_LoadForms.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.bt_LoadForms.Name = "bt_LoadForms";
-            this.bt_LoadForms.Size = new System.Drawing.Size(71, 22);
+            this.bt_LoadForms.Size = new System.Drawing.Size(71, 28);
             this.bt_LoadForms.Text = "Load forms";
             this.bt_LoadForms.Click += new System.EventHandler(this.bt_LoadForms_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
             // 
             // tsbClose
             // 
             this.tsbClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.tsbClose.Name = "tsbClose";
-            this.tsbClose.Size = new System.Drawing.Size(40, 22);
+            this.tsbClose.Size = new System.Drawing.Size(40, 28);
             this.tsbClose.Text = "Close";
             this.tsbClose.Click += new System.EventHandler(this.tsbClose_Click);
             // 
             // tssSeparator1
             // 
             this.tssSeparator1.Name = "tssSeparator1";
-            this.tssSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.tssSeparator1.Size = new System.Drawing.Size(6, 31);
+            // 
+            // bt_TransferForms
+            // 
+            this.bt_TransferForms.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.bt_TransferForms.Enabled = false;
+            this.bt_TransferForms.Image = ((System.Drawing.Image)(resources.GetObject("bt_TransferForms.Image")));
+            this.bt_TransferForms.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.bt_TransferForms.Name = "bt_TransferForms";
+            this.bt_TransferForms.Size = new System.Drawing.Size(138, 28);
+            this.bt_TransferForms.Text = "Transfers forms selected";
+            this.bt_TransferForms.Click += new System.EventHandler(this.bt_TransferForms_Click);
             // 
             // p_control
             // 
@@ -129,6 +139,110 @@
             this.p_control.Size = new System.Drawing.Size(838, 647);
             this.p_control.TabIndex = 6;
             // 
+            // p_Forms
+            // 
+            this.p_Forms.Controls.Add(this.p_ListViewForms);
+            this.p_Forms.Controls.Add(this.p_Status);
+            this.p_Forms.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.p_Forms.Location = new System.Drawing.Point(5, 82);
+            this.p_Forms.Name = "p_Forms";
+            this.p_Forms.Size = new System.Drawing.Size(828, 560);
+            this.p_Forms.TabIndex = 8;
+            // 
+            // p_ListViewForms
+            // 
+            this.p_ListViewForms.Controls.Add(this.gb_SourceForms);
+            this.p_ListViewForms.Controls.Add(this.gb_TargetForms);
+            this.p_ListViewForms.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.p_ListViewForms.Location = new System.Drawing.Point(0, 0);
+            this.p_ListViewForms.Name = "p_ListViewForms";
+            this.p_ListViewForms.Size = new System.Drawing.Size(828, 529);
+            this.p_ListViewForms.TabIndex = 10;
+            // 
+            // gb_SourceForms
+            // 
+            this.gb_SourceForms.Controls.Add(this.lv_SourceForms);
+            this.gb_SourceForms.Dock = System.Windows.Forms.DockStyle.Left;
+            this.gb_SourceForms.Location = new System.Drawing.Point(0, 0);
+            this.gb_SourceForms.Margin = new System.Windows.Forms.Padding(0);
+            this.gb_SourceForms.Name = "gb_SourceForms";
+            this.gb_SourceForms.Size = new System.Drawing.Size(400, 529);
+            this.gb_SourceForms.TabIndex = 6;
+            this.gb_SourceForms.TabStop = false;
+            this.gb_SourceForms.Text = "Forms in source";
+            // 
+            // lv_SourceForms
+            // 
+            this.lv_SourceForms.CheckBoxes = true;
+            this.lv_SourceForms.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lv_SourceForms.FullRowSelect = true;
+            this.lv_SourceForms.HideSelection = false;
+            this.lv_SourceForms.Location = new System.Drawing.Point(3, 16);
+            this.lv_SourceForms.Margin = new System.Windows.Forms.Padding(5);
+            this.lv_SourceForms.Name = "lv_SourceForms";
+            this.lv_SourceForms.Size = new System.Drawing.Size(394, 510);
+            this.lv_SourceForms.TabIndex = 0;
+            this.lv_SourceForms.UseCompatibleStateImageBehavior = false;
+            this.lv_SourceForms.View = System.Windows.Forms.View.Details;
+            this.lv_SourceForms.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lv_ItemSelectionChanged);
+            // 
+            // gb_TargetForms
+            // 
+            this.gb_TargetForms.Controls.Add(this.lv_TargetForms);
+            this.gb_TargetForms.Dock = System.Windows.Forms.DockStyle.Right;
+            this.gb_TargetForms.Location = new System.Drawing.Point(428, 0);
+            this.gb_TargetForms.Margin = new System.Windows.Forms.Padding(0);
+            this.gb_TargetForms.Name = "gb_TargetForms";
+            this.gb_TargetForms.Size = new System.Drawing.Size(400, 529);
+            this.gb_TargetForms.TabIndex = 7;
+            this.gb_TargetForms.TabStop = false;
+            this.gb_TargetForms.Text = "Forms in target";
+            // 
+            // lv_TargetForms
+            // 
+            this.lv_TargetForms.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lv_TargetForms.FullRowSelect = true;
+            this.lv_TargetForms.HideSelection = false;
+            this.lv_TargetForms.Location = new System.Drawing.Point(3, 16);
+            this.lv_TargetForms.Margin = new System.Windows.Forms.Padding(5);
+            this.lv_TargetForms.Name = "lv_TargetForms";
+            this.lv_TargetForms.Size = new System.Drawing.Size(394, 510);
+            this.lv_TargetForms.TabIndex = 1;
+            this.lv_TargetForms.UseCompatibleStateImageBehavior = false;
+            this.lv_TargetForms.View = System.Windows.Forms.View.Details;
+            this.lv_TargetForms.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lv_ItemSelectionChanged);
+            // 
+            // p_Status
+            // 
+            this.p_Status.Controls.Add(this.p_FormsSourceStatus);
+            this.p_Status.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.p_Status.Location = new System.Drawing.Point(0, 529);
+            this.p_Status.Name = "p_Status";
+            this.p_Status.Size = new System.Drawing.Size(828, 31);
+            this.p_Status.TabIndex = 9;
+            // 
+            // p_FormsSourceStatus
+            // 
+            this.p_FormsSourceStatus.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.p_FormsSourceStatus.Controls.Add(this.l_FormsSourceStatus);
+            this.p_FormsSourceStatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.p_FormsSourceStatus.Location = new System.Drawing.Point(0, 0);
+            this.p_FormsSourceStatus.Name = "p_FormsSourceStatus";
+            this.p_FormsSourceStatus.Size = new System.Drawing.Size(828, 31);
+            this.p_FormsSourceStatus.TabIndex = 7;
+            // 
+            // l_FormsSourceStatus
+            // 
+            this.l_FormsSourceStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.l_FormsSourceStatus.AutoSize = true;
+            this.l_FormsSourceStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.l_FormsSourceStatus.Location = new System.Drawing.Point(5, 7);
+            this.l_FormsSourceStatus.Name = "l_FormsSourceStatus";
+            this.l_FormsSourceStatus.Size = new System.Drawing.Size(137, 15);
+            this.l_FormsSourceStatus.TabIndex = 0;
+            this.l_FormsSourceStatus.Text = "Comparer status forms :";
+            // 
             // p_settings
             // 
             this.p_settings.Controls.Add(this.gb_settings);
@@ -141,8 +255,8 @@
             // 
             // gb_settings
             // 
-            this.gb_settings.Controls.Add(this.checkBox1);
-            this.gb_settings.Controls.Add(this.cb_TransfersInDraft);
+            this.gb_settings.Controls.Add(this.cb_transfersFormRedirect);
+            this.gb_settings.Controls.Add(this.cb_TransfersFormsInDraft);
             this.gb_settings.Dock = System.Windows.Forms.DockStyle.Right;
             this.gb_settings.Location = new System.Drawing.Point(628, 0);
             this.gb_settings.Margin = new System.Windows.Forms.Padding(0);
@@ -152,29 +266,29 @@
             this.gb_settings.TabStop = false;
             this.gb_settings.Text = "Settings";
             // 
-            // checkBox1
+            // cb_transfersFormRedirect
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.checkBox1.Location = new System.Drawing.Point(3, 43);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Padding = new System.Windows.Forms.Padding(5);
-            this.checkBox1.Size = new System.Drawing.Size(194, 27);
-            this.checkBox1.TabIndex = 1;
-            this.checkBox1.Text = "Transfers forms relations";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            this.cb_transfersFormRedirect.AutoSize = true;
+            this.cb_transfersFormRedirect.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cb_transfersFormRedirect.Location = new System.Drawing.Point(3, 43);
+            this.cb_transfersFormRedirect.Name = "cb_transfersFormRedirect";
+            this.cb_transfersFormRedirect.Padding = new System.Windows.Forms.Padding(5);
+            this.cb_transfersFormRedirect.Size = new System.Drawing.Size(194, 27);
+            this.cb_transfersFormRedirect.TabIndex = 1;
+            this.cb_transfersFormRedirect.Text = "Transfers forms redirect";
+            this.cb_transfersFormRedirect.UseVisualStyleBackColor = true;
             // 
-            // cb_TransfersInDraft
+            // cb_TransfersFormsInDraft
             // 
-            this.cb_TransfersInDraft.AutoSize = true;
-            this.cb_TransfersInDraft.Dock = System.Windows.Forms.DockStyle.Top;
-            this.cb_TransfersInDraft.Location = new System.Drawing.Point(3, 16);
-            this.cb_TransfersInDraft.Name = "cb_TransfersInDraft";
-            this.cb_TransfersInDraft.Padding = new System.Windows.Forms.Padding(5);
-            this.cb_TransfersInDraft.Size = new System.Drawing.Size(194, 27);
-            this.cb_TransfersInDraft.TabIndex = 0;
-            this.cb_TransfersInDraft.Text = "Transfers forms in draft";
-            this.cb_TransfersInDraft.UseVisualStyleBackColor = true;
+            this.cb_TransfersFormsInDraft.AutoSize = true;
+            this.cb_TransfersFormsInDraft.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cb_TransfersFormsInDraft.Location = new System.Drawing.Point(3, 16);
+            this.cb_TransfersFormsInDraft.Name = "cb_TransfersFormsInDraft";
+            this.cb_TransfersFormsInDraft.Padding = new System.Windows.Forms.Padding(5);
+            this.cb_TransfersFormsInDraft.Size = new System.Drawing.Size(194, 27);
+            this.cb_TransfersFormsInDraft.TabIndex = 0;
+            this.cb_TransfersFormsInDraft.Text = "Transfers forms in draft";
+            this.cb_TransfersFormsInDraft.UseVisualStyleBackColor = true;
             // 
             // gb_environments
             // 
@@ -243,142 +357,14 @@
             this.bt_SelectTarget.UseVisualStyleBackColor = true;
             this.bt_SelectTarget.Click += new System.EventHandler(this.bt_SelectTarget_Click);
             // 
-            // bt_TransferForms
+            // bt_Donate
             // 
-            this.bt_TransferForms.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.bt_TransferForms.Image = ((System.Drawing.Image)(resources.GetObject("bt_TransferForms.Image")));
-            this.bt_TransferForms.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.bt_TransferForms.Name = "bt_TransferForms";
-            this.bt_TransferForms.Size = new System.Drawing.Size(138, 22);
-            this.bt_TransferForms.Text = "Transfers forms selected";
-            // 
-            // p_ListViewForms
-            // 
-            this.p_ListViewForms.Controls.Add(this.gb_SourceForms);
-            this.p_ListViewForms.Controls.Add(this.gb_TargetForms);
-            this.p_ListViewForms.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.p_ListViewForms.Location = new System.Drawing.Point(0, 0);
-            this.p_ListViewForms.Name = "p_ListViewForms";
-            this.p_ListViewForms.Size = new System.Drawing.Size(828, 529);
-            this.p_ListViewForms.TabIndex = 10;
-            // 
-            // gb_TargetForms
-            // 
-            this.gb_TargetForms.Controls.Add(this.lv_TargetForms);
-            this.gb_TargetForms.Dock = System.Windows.Forms.DockStyle.Right;
-            this.gb_TargetForms.Location = new System.Drawing.Point(428, 0);
-            this.gb_TargetForms.Margin = new System.Windows.Forms.Padding(0);
-            this.gb_TargetForms.Name = "gb_TargetForms";
-            this.gb_TargetForms.Size = new System.Drawing.Size(400, 529);
-            this.gb_TargetForms.TabIndex = 7;
-            this.gb_TargetForms.TabStop = false;
-            this.gb_TargetForms.Text = "Forms in target";
-            // 
-            // lv_TargetForms
-            // 
-            this.lv_TargetForms.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lv_TargetForms.FullRowSelect = true;
-            this.lv_TargetForms.HideSelection = false;
-            this.lv_TargetForms.Location = new System.Drawing.Point(3, 16);
-            this.lv_TargetForms.Margin = new System.Windows.Forms.Padding(5);
-            this.lv_TargetForms.Name = "lv_TargetForms";
-            this.lv_TargetForms.Size = new System.Drawing.Size(394, 510);
-            this.lv_TargetForms.TabIndex = 1;
-            this.lv_TargetForms.UseCompatibleStateImageBehavior = false;
-            this.lv_TargetForms.View = System.Windows.Forms.View.Details;
-            this.lv_TargetForms.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lv_ItemSelectionChanged);
-            // 
-            // gb_SourceForms
-            // 
-            this.gb_SourceForms.Controls.Add(this.lv_SourceForms);
-            this.gb_SourceForms.Dock = System.Windows.Forms.DockStyle.Left;
-            this.gb_SourceForms.Location = new System.Drawing.Point(0, 0);
-            this.gb_SourceForms.Margin = new System.Windows.Forms.Padding(0);
-            this.gb_SourceForms.Name = "gb_SourceForms";
-            this.gb_SourceForms.Size = new System.Drawing.Size(400, 529);
-            this.gb_SourceForms.TabIndex = 6;
-            this.gb_SourceForms.TabStop = false;
-            this.gb_SourceForms.Text = "Forms in source";
-            // 
-            // lv_SourceForms
-            // 
-            this.lv_SourceForms.CheckBoxes = true;
-            this.lv_SourceForms.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lv_SourceForms.FullRowSelect = true;
-            this.lv_SourceForms.HideSelection = false;
-            this.lv_SourceForms.Location = new System.Drawing.Point(3, 16);
-            this.lv_SourceForms.Margin = new System.Windows.Forms.Padding(5);
-            this.lv_SourceForms.Name = "lv_SourceForms";
-            this.lv_SourceForms.Size = new System.Drawing.Size(394, 510);
-            this.lv_SourceForms.TabIndex = 0;
-            this.lv_SourceForms.UseCompatibleStateImageBehavior = false;
-            this.lv_SourceForms.View = System.Windows.Forms.View.Details;
-            this.lv_SourceForms.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lv_ItemSelectionChanged);
-            // 
-            // p_Forms
-            // 
-            this.p_Forms.Controls.Add(this.p_ListViewForms);
-            this.p_Forms.Controls.Add(this.p_Status);
-            this.p_Forms.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.p_Forms.Location = new System.Drawing.Point(5, 82);
-            this.p_Forms.Name = "p_Forms";
-            this.p_Forms.Size = new System.Drawing.Size(828, 560);
-            this.p_Forms.TabIndex = 8;
-            // 
-            // p_FormsTargetStatus
-            // 
-            this.p_FormsTargetStatus.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.p_FormsTargetStatus.Controls.Add(this.l_FormsTargetStatus);
-            this.p_FormsTargetStatus.Dock = System.Windows.Forms.DockStyle.Right;
-            this.p_FormsTargetStatus.Location = new System.Drawing.Point(428, 0);
-            this.p_FormsTargetStatus.Name = "p_FormsTargetStatus";
-            this.p_FormsTargetStatus.Size = new System.Drawing.Size(400, 31);
-            this.p_FormsTargetStatus.TabIndex = 8;
-            // 
-            // l_FormsTargetStatus
-            // 
-            this.l_FormsTargetStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.l_FormsTargetStatus.AutoSize = true;
-            this.l_FormsTargetStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l_FormsTargetStatus.Location = new System.Drawing.Point(5, 7);
-            this.l_FormsTargetStatus.Name = "l_FormsTargetStatus";
-            this.l_FormsTargetStatus.Size = new System.Drawing.Size(47, 15);
-            this.l_FormsTargetStatus.TabIndex = 0;
-            this.l_FormsTargetStatus.Text = "Status :";
-            // 
-            // p_FormsSourceStatus
-            // 
-            this.p_FormsSourceStatus.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.p_FormsSourceStatus.Controls.Add(this.l_FormsSourceStatus);
-            this.p_FormsSourceStatus.Dock = System.Windows.Forms.DockStyle.Left;
-            this.p_FormsSourceStatus.Location = new System.Drawing.Point(0, 0);
-            this.p_FormsSourceStatus.Name = "p_FormsSourceStatus";
-            this.p_FormsSourceStatus.Size = new System.Drawing.Size(400, 31);
-            this.p_FormsSourceStatus.TabIndex = 7;
-            // 
-            // l_FormsSourceStatus
-            // 
-            this.l_FormsSourceStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.l_FormsSourceStatus.AutoSize = true;
-            this.l_FormsSourceStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.l_FormsSourceStatus.Location = new System.Drawing.Point(5, 7);
-            this.l_FormsSourceStatus.Name = "l_FormsSourceStatus";
-            this.l_FormsSourceStatus.Size = new System.Drawing.Size(47, 15);
-            this.l_FormsSourceStatus.TabIndex = 0;
-            this.l_FormsSourceStatus.Text = "Status :";
-            this.l_FormsSourceStatus.Click += new System.EventHandler(this.l_FormsSourceStatus_Click);
-            // 
-            // p_Status
-            // 
-            this.p_Status.Controls.Add(this.p_FormsSourceStatus);
-            this.p_Status.Controls.Add(this.p_FormsTargetStatus);
-            this.p_Status.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.p_Status.Location = new System.Drawing.Point(0, 529);
-            this.p_Status.Name = "p_Status";
-            this.p_Status.Size = new System.Drawing.Size(828, 31);
-            this.p_Status.TabIndex = 9;
+            this.bt_Donate.Image = global::XrmToolBox.TransferFormsRTMEnvironments.Properties.Resources.paypal;
+            this.bt_Donate.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.bt_Donate.Name = "bt_Donate";
+            this.bt_Donate.Size = new System.Drawing.Size(73, 28);
+            this.bt_Donate.Text = "Donate";
+            this.bt_Donate.Click += new System.EventHandler(this.bt_Donate_Click);
             // 
             // TransferRTMFormsBetweenEnvironmentsPluginControl
             // 
@@ -394,21 +380,19 @@
             this.toolStripMenu.ResumeLayout(false);
             this.toolStripMenu.PerformLayout();
             this.p_control.ResumeLayout(false);
+            this.p_Forms.ResumeLayout(false);
+            this.p_ListViewForms.ResumeLayout(false);
+            this.gb_SourceForms.ResumeLayout(false);
+            this.gb_TargetForms.ResumeLayout(false);
+            this.p_Status.ResumeLayout(false);
+            this.p_FormsSourceStatus.ResumeLayout(false);
+            this.p_FormsSourceStatus.PerformLayout();
             this.p_settings.ResumeLayout(false);
             this.gb_settings.ResumeLayout(false);
             this.gb_settings.PerformLayout();
             this.gb_environments.ResumeLayout(false);
             this.p_environmentSources.ResumeLayout(false);
             this.p_environmentSources.PerformLayout();
-            this.p_ListViewForms.ResumeLayout(false);
-            this.gb_TargetForms.ResumeLayout(false);
-            this.gb_SourceForms.ResumeLayout(false);
-            this.p_Forms.ResumeLayout(false);
-            this.p_FormsTargetStatus.ResumeLayout(false);
-            this.p_FormsTargetStatus.PerformLayout();
-            this.p_FormsSourceStatus.ResumeLayout(false);
-            this.p_FormsSourceStatus.PerformLayout();
-            this.p_Status.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -423,8 +407,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.Panel p_settings;
         private System.Windows.Forms.GroupBox gb_settings;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.CheckBox cb_TransfersInDraft;
+        private System.Windows.Forms.CheckBox cb_transfersFormRedirect;
+        private System.Windows.Forms.CheckBox cb_TransfersFormsInDraft;
         private System.Windows.Forms.GroupBox gb_environments;
         private System.Windows.Forms.Panel p_environmentSources;
         private System.Windows.Forms.Label l_environmentTargetValue;
@@ -441,7 +425,6 @@
         private System.Windows.Forms.Panel p_Status;
         private System.Windows.Forms.Panel p_FormsSourceStatus;
         private System.Windows.Forms.Label l_FormsSourceStatus;
-        private System.Windows.Forms.Panel p_FormsTargetStatus;
-        private System.Windows.Forms.Label l_FormsTargetStatus;
+        private System.Windows.Forms.ToolStripButton bt_Donate;
     }
 }
