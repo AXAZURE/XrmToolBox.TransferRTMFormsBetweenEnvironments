@@ -5,4 +5,9 @@
     <StartProgram>C:\Devops\Axazure\GitHub\XrmToolBox.TransferRTMFormsBetweenEnvironments\XrmToolBox.TransferFormsRTMEnvironments\bin\Debug\XrmToolBox.exe</StartProgram>
     <StartArguments>/overridepath:.</StartArguments>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <StartArguments>/overridepath:.</StartArguments>
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\Devops\Axazure\GitHub\XrmToolBox.TransferRTMFormsBetweenEnvironments\XrmToolBox.TransferFormsRTMEnvironments\bin\Release\XrmToolBox.exe</StartProgram>
+  </PropertyGroup>
 </Project>

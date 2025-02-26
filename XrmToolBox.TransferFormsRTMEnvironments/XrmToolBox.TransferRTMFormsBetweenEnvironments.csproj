@@ -8,8 +8,8 @@
     <ProjectGuid>{50936D1C-D541-4213-A594-9A0FE8A6C1C3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>XrmToolBox.TransferFormsRTMEnvironments</RootNamespace>
-    <AssemblyName>XrmToolBox.TransferFormsRTMEnvironments</AssemblyName>
+    <RootNamespace>TransferFormsRTMEnvironments</RootNamespace>
+    <AssemblyName>TransferFormsRTMEnvironments</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -206,9 +206,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\showForm.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\showForm.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

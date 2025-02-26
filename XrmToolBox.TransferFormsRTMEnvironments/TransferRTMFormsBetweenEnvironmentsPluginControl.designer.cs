@@ -1,4 +1,4 @@
-﻿namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
+﻿namespace TransferFormsRTMEnvironments
 {
     partial class TransferRTMFormsBetweenEnvironmentsPluginControl
     {
@@ -129,7 +129,7 @@
             // 
             // bt_Donate
             // 
-            this.bt_Donate.Image = global::XrmToolBox.TransferFormsRTMEnvironments.Properties.Resources.paypal;
+            this.bt_Donate.Image = global::TransferFormsRTMEnvironments.Properties.Resources.paypal;
             this.bt_Donate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.bt_Donate.Name = "bt_Donate";
             this.bt_Donate.Size = new System.Drawing.Size(73, 28);
