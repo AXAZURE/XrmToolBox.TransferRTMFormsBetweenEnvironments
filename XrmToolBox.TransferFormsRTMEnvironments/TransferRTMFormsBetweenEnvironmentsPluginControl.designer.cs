@@ -30,11 +30,9 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TransferRTMFormsBetweenEnvironmentsPluginControl));
             this.toolStripMenu = new System.Windows.Forms.ToolStrip();
-            this.bt_LoadForms = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbClose = new System.Windows.Forms.ToolStripButton();
             this.tssSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.bt_TransferForms = new System.Windows.Forms.ToolStripButton();
             this.p_control = new System.Windows.Forms.Panel();
             this.p_Forms = new System.Windows.Forms.Panel();
             this.p_ListViewForms = new System.Windows.Forms.Panel();
@@ -47,7 +45,7 @@
             this.l_FormsSourceStatus = new System.Windows.Forms.Label();
             this.p_settings = new System.Windows.Forms.Panel();
             this.gb_settings = new System.Windows.Forms.GroupBox();
-            this.cb_transfersFormRedirect = new System.Windows.Forms.CheckBox();
+            this.cb_TransfersFormsRedirect = new System.Windows.Forms.CheckBox();
             this.cb_TransfersFormsInDraft = new System.Windows.Forms.CheckBox();
             this.gb_environments = new System.Windows.Forms.GroupBox();
             this.p_environmentSources = new System.Windows.Forms.Panel();
@@ -55,6 +53,8 @@
             this.l_environmentSource = new System.Windows.Forms.Label();
             this.l_environmentTargetValue = new System.Windows.Forms.Label();
             this.bt_SelectTarget = new System.Windows.Forms.Button();
+            this.bt_LoadForms = new System.Windows.Forms.ToolStripButton();
+            this.bt_TransferForms = new System.Windows.Forms.ToolStripButton();
             this.bt_Donate = new System.Windows.Forms.ToolStripButton();
             this.toolStripMenu.SuspendLayout();
             this.p_control.SuspendLayout();
@@ -86,16 +86,6 @@
             this.toolStripMenu.TabIndex = 4;
             this.toolStripMenu.Text = "toolStrip1";
             // 
-            // bt_LoadForms
-            // 
-            this.bt_LoadForms.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.bt_LoadForms.Image = ((System.Drawing.Image)(resources.GetObject("bt_LoadForms.Image")));
-            this.bt_LoadForms.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.bt_LoadForms.Name = "bt_LoadForms";
-            this.bt_LoadForms.Size = new System.Drawing.Size(71, 28);
-            this.bt_LoadForms.Text = "Load forms";
-            this.bt_LoadForms.Click += new System.EventHandler(this.bt_LoadForms_Click);
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -113,17 +103,6 @@
             // 
             this.tssSeparator1.Name = "tssSeparator1";
             this.tssSeparator1.Size = new System.Drawing.Size(6, 31);
-            // 
-            // bt_TransferForms
-            // 
-            this.bt_TransferForms.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.bt_TransferForms.Enabled = false;
-            this.bt_TransferForms.Image = ((System.Drawing.Image)(resources.GetObject("bt_TransferForms.Image")));
-            this.bt_TransferForms.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.bt_TransferForms.Name = "bt_TransferForms";
-            this.bt_TransferForms.Size = new System.Drawing.Size(138, 28);
-            this.bt_TransferForms.Text = "Transfers forms selected";
-            this.bt_TransferForms.Click += new System.EventHandler(this.bt_TransferForms_Click);
             // 
             // p_control
             // 
@@ -184,6 +163,7 @@
             this.lv_SourceForms.TabIndex = 0;
             this.lv_SourceForms.UseCompatibleStateImageBehavior = false;
             this.lv_SourceForms.View = System.Windows.Forms.View.Details;
+            this.lv_SourceForms.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lv_SourceForms_ItemChecked);
             this.lv_SourceForms.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lv_ItemSelectionChanged);
             // 
             // gb_TargetForms
@@ -255,7 +235,7 @@
             // 
             // gb_settings
             // 
-            this.gb_settings.Controls.Add(this.cb_transfersFormRedirect);
+            this.gb_settings.Controls.Add(this.cb_TransfersFormsRedirect);
             this.gb_settings.Controls.Add(this.cb_TransfersFormsInDraft);
             this.gb_settings.Dock = System.Windows.Forms.DockStyle.Right;
             this.gb_settings.Location = new System.Drawing.Point(628, 0);
@@ -266,17 +246,17 @@
             this.gb_settings.TabStop = false;
             this.gb_settings.Text = "Settings";
             // 
-            // cb_transfersFormRedirect
+            // cb_TransfersFormsRedirect
             // 
-            this.cb_transfersFormRedirect.AutoSize = true;
-            this.cb_transfersFormRedirect.Dock = System.Windows.Forms.DockStyle.Top;
-            this.cb_transfersFormRedirect.Location = new System.Drawing.Point(3, 43);
-            this.cb_transfersFormRedirect.Name = "cb_transfersFormRedirect";
-            this.cb_transfersFormRedirect.Padding = new System.Windows.Forms.Padding(5);
-            this.cb_transfersFormRedirect.Size = new System.Drawing.Size(194, 27);
-            this.cb_transfersFormRedirect.TabIndex = 1;
-            this.cb_transfersFormRedirect.Text = "Transfers forms redirect";
-            this.cb_transfersFormRedirect.UseVisualStyleBackColor = true;
+            this.cb_TransfersFormsRedirect.AutoSize = true;
+            this.cb_TransfersFormsRedirect.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cb_TransfersFormsRedirect.Location = new System.Drawing.Point(3, 43);
+            this.cb_TransfersFormsRedirect.Name = "cb_TransfersFormsRedirect";
+            this.cb_TransfersFormsRedirect.Padding = new System.Windows.Forms.Padding(5);
+            this.cb_TransfersFormsRedirect.Size = new System.Drawing.Size(194, 27);
+            this.cb_TransfersFormsRedirect.TabIndex = 1;
+            this.cb_TransfersFormsRedirect.Text = "Transfers forms redirect";
+            this.cb_TransfersFormsRedirect.UseVisualStyleBackColor = true;
             // 
             // cb_TransfersFormsInDraft
             // 
@@ -357,6 +337,27 @@
             this.bt_SelectTarget.UseVisualStyleBackColor = true;
             this.bt_SelectTarget.Click += new System.EventHandler(this.bt_SelectTarget_Click);
             // 
+            // bt_LoadForms
+            // 
+            this.bt_LoadForms.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.bt_LoadForms.Image = ((System.Drawing.Image)(resources.GetObject("bt_LoadForms.Image")));
+            this.bt_LoadForms.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.bt_LoadForms.Name = "bt_LoadForms";
+            this.bt_LoadForms.Size = new System.Drawing.Size(71, 28);
+            this.bt_LoadForms.Text = "Load forms";
+            this.bt_LoadForms.Click += new System.EventHandler(this.bt_LoadForms_Click);
+            // 
+            // bt_TransferForms
+            // 
+            this.bt_TransferForms.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.bt_TransferForms.Enabled = false;
+            this.bt_TransferForms.Image = ((System.Drawing.Image)(resources.GetObject("bt_TransferForms.Image")));
+            this.bt_TransferForms.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.bt_TransferForms.Name = "bt_TransferForms";
+            this.bt_TransferForms.Size = new System.Drawing.Size(138, 28);
+            this.bt_TransferForms.Text = "Transfers forms selected";
+            this.bt_TransferForms.Click += new System.EventHandler(this.bt_TransferForms_Click);
+            // 
             // bt_Donate
             // 
             this.bt_Donate.Image = global::XrmToolBox.TransferFormsRTMEnvironments.Properties.Resources.paypal;
@@ -407,7 +408,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.Panel p_settings;
         private System.Windows.Forms.GroupBox gb_settings;
-        private System.Windows.Forms.CheckBox cb_transfersFormRedirect;
+        private System.Windows.Forms.CheckBox cb_TransfersFormsRedirect;
         private System.Windows.Forms.CheckBox cb_TransfersFormsInDraft;
         private System.Windows.Forms.GroupBox gb_environments;
         private System.Windows.Forms.Panel p_environmentSources;

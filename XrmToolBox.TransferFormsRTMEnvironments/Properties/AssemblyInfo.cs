@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("XrmToolBox.TransferFormsRTMEnvironments")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Tool to transfer RTM forms between environments.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Ricardo Manzanares Camargo")]
 [assembly: AssemblyProduct("XrmToolBox.TransferFormsRTMEnvironments")]
 [assembly: AssemblyCopyright("Copyright ©  2025")]
 [assembly: AssemblyTrademark("")]

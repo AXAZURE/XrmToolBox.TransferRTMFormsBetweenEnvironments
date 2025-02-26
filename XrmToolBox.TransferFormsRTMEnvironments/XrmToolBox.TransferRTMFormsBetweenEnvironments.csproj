@@ -198,6 +198,12 @@
   <ItemGroup>
     <None Include="Resources\paypal.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Transfer RTM Forms between Environments.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Transfer RTM Forms between Environments.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

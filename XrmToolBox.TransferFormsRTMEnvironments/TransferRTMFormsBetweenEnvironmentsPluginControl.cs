@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Workflow.Activities;
 using XrmToolBox.Extensibility;
 using static System.Windows.Forms.ListViewItem;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
@@ -23,9 +24,12 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
         private Settings mySettings;
 
         private List<ListViewItem> _sourceForms = new List<ListViewItem>();
+        private Dictionary<Entity, Entity> _entitiesSourceForms = new Dictionary<Entity, Entity>();
 
         private IOrganizationService _targetService;
         private List<ListViewItem> _targetForms = new List<ListViewItem>();
+        private Dictionary<Entity, Entity> _entitiesTargetForms = new Dictionary<Entity, Entity>();
+
 
         const string FORM_STATUS_UPDATED = "It will be updated";
         const string FORM_STATUS_NEW = "It will be created";
@@ -107,20 +111,30 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
 
         private void SummaryStatus()
         {
-            //Forms Source
-            l_FormsSourceStatus.Text = $"Comparer status forms : Source: {_sourceForms.Count}";
-
-            if(_targetForms != null && _targetForms.Count > 0)
+            if (lv_SourceForms.Items.Count > 0)
             {
-                l_FormsSourceStatus.Text += $" - Target: {_targetForms.Count}";
-                p_FormsSourceStatus.BackColor = Color.Yellow;
-            }
-            else
-            {
-                p_FormsSourceStatus.BackColor = Color.White;
-            }
+                var formsSourceSelected = lv_SourceForms.Items.Cast<ListViewItem>().Where(k => k != null && k.Checked).ToList();
 
-            l_FormsSourceStatus.Text += $" || Will be created: {_sourceForms.Select(k => k.SubItems[3]).Where(s => s.Text == FORM_STATUS_NEW).Count()} - Will be Updated: {_sourceForms.Select(k => k.SubItems[3]).Where(s => s.Text == FORM_STATUS_UPDATED).Count()}";
+                //Forms Source
+                l_FormsSourceStatus.Text = $"Comparer status forms : Source: {lv_SourceForms.Items.Count}";
+
+                if (_targetForms != null && _targetForms.Count > 0)
+                {
+                    l_FormsSourceStatus.Text += $" - Target: {_targetForms.Count}";
+                    p_FormsSourceStatus.BackColor = Color.Yellow;
+                }
+                else
+                {
+                    p_FormsSourceStatus.BackColor = Color.White;
+                }
+
+                l_FormsSourceStatus.Text += $" || Will be created: {formsSourceSelected.Select(k => k.SubItems[3]).Where(s => s.Text == FORM_STATUS_NEW).Count()} - Will be Updated: {formsSourceSelected.Select(k => k.SubItems[3]).Where(s => s.Text == FORM_STATUS_UPDATED).Count()}";
+
+                if (formsSourceSelected.Count > 0)
+                    bt_TransferForms.Enabled = true;
+                else
+                    bt_TransferForms.Enabled = false;
+            }
         }
 
         private int GetVScrollBarWidth()
@@ -142,9 +156,10 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                 }           
             }
 
-            if (loadSourceForms)
+            if (Service != null && loadSourceForms)
             {
                 _sourceForms.Clear();
+                _entitiesSourceForms.Clear();
 
                 WorkAsync(new WorkAsyncInfo
                 {
@@ -170,25 +185,30 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
 
                         if (formsSource != null && formsSource.Entities != null && formsSource.Entities.Count > 0)
                         {
-                            List<String> formsNameRelated = new List<String>();
+                            List<String> formsNameRedirect = new List<String>();
 
                             foreach (var entity in formsSource.Entities)
                             {
-                                if (!formsNameRelated.Contains(entity.Attributes["msdynmkt_name"].ToString()))
+                                if (!formsNameRedirect.Contains(entity.Attributes["msdynmkt_name"].ToString()))
                                 {
-                                    var formRelation = string.Empty;
+                                    var formRedirect = string.Empty;
 
                                     if (entity.Contains("msdynmkt_redirecturl") && !String.IsNullOrEmpty(entity.Attributes["msdynmkt_redirecturl"].ToString()))
                                     {
                                         var related = formsSource.Entities.Where(k => k.Id == Guid.Parse(entity.Attributes["msdynmkt_redirecturl"].ToString().Split('/').Last())).FirstOrDefault();
                                         if (related != null)
                                         {
-                                            formRelation = related.Attributes["msdynmkt_name"].ToString();
-                                            formsNameRelated.Add(formRelation);
+                                            formRedirect = related.Attributes["msdynmkt_name"].ToString();
+                                            formsNameRedirect.Add(formRedirect);
+                                            _entitiesSourceForms.Add(entity, related);
                                         }
                                     }
+                                    else
+                                    {
+                                        _entitiesSourceForms.Add(entity, null);
+                                    }                                    
 
-                                    _sourceForms.Add(new ListViewItem(new string[] { entity.Attributes["msdynmkt_name"].ToString(), string.IsNullOrEmpty(formRelation) ? "" : formRelation, entity.FormattedValues["statuscode"].ToString(), FORM_STATUS_NOTCONNECT_TARGET }) { ForeColor = Color.Red });
+                                    _sourceForms.Add(new ListViewItem(new string[] { entity.Attributes["msdynmkt_name"].ToString(), string.IsNullOrEmpty(formRedirect) ? "" : formRedirect, entity.FormattedValues["statuscode"].ToString(), FORM_STATUS_NOTCONNECT_TARGET }) { ForeColor = Color.Red });
                                 }
                             }
                         }
@@ -233,6 +253,7 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
             if (_targetService != null && loadTargetForms)
             {
                 _targetForms.Clear();
+                _entitiesTargetForms.Clear();
 
                 WorkAsync(new WorkAsyncInfo
                 {
@@ -258,11 +279,11 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
 
                         if (formsTarget != null && formsTarget.Entities != null && formsTarget.Entities.Count > 0)
                         {
-                            List<String> formsNameRelated = new List<String>();
+                            List<String> formsNameRedirect = new List<String>();
 
                             foreach (var entity in formsTarget.Entities)
                             {
-                                if (!formsNameRelated.Contains(entity.Attributes["msdynmkt_name"].ToString()))
+                                if (!formsNameRedirect.Contains(entity.Attributes["msdynmkt_name"].ToString()))
                                 {
                                     var existFormInSource = _sourceForms.Exists(k => k.Text == entity.Attributes["msdynmkt_name"].ToString());
                                     if (!existFormInSource)
@@ -281,19 +302,24 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                                         }
                                     }
 
-                                    var formRelation = string.Empty;
+                                    var formRedirect = string.Empty;
 
                                     if (entity.Contains("msdynmkt_redirecturl") && !String.IsNullOrEmpty(entity.Attributes["msdynmkt_redirecturl"].ToString()))
                                     {
                                         var related = formsTarget.Entities.Where(k => k.Id == Guid.Parse(entity.Attributes["msdynmkt_redirecturl"].ToString().Split('/').Last())).FirstOrDefault();
                                         if (related != null)
                                         {
-                                            formRelation = related.Attributes["msdynmkt_name"].ToString();
-                                            formsNameRelated.Add(formRelation);
+                                            formRedirect = related.Attributes["msdynmkt_name"].ToString();
+                                            formsNameRedirect.Add(formRedirect);
+                                            _entitiesTargetForms.Add(entity, related);
                                         }
                                     }
+                                    else
+                                    {
+                                        _entitiesTargetForms.Add(entity, null);
+                                    }
 
-                                    _targetForms.Add(new ListViewItem(new string[] { entity.Attributes["msdynmkt_name"].ToString(), string.IsNullOrEmpty(formRelation) ? "" : formRelation, entity.FormattedValues["statuscode"].ToString(), existFormInSource ? FORM_STATUS_UPDATED : FORM_STATUS_NEW }) { ForeColor = existFormInSource ? Color.Red : Color.Green });
+                                    _targetForms.Add(new ListViewItem(new string[] { entity.Attributes["msdynmkt_name"].ToString(), string.IsNullOrEmpty(formRedirect) ? "" : formRedirect, entity.FormattedValues["statuscode"].ToString(), existFormInSource ? FORM_STATUS_UPDATED : FORM_STATUS_NEW }) { ForeColor = existFormInSource ? Color.Red : Color.Green });
                                 }
                             }
                         }
@@ -447,15 +473,45 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
 
         private void bt_TransferForms_Click(object sender, EventArgs e)
         {
+            var formsSourceSelected = lv_SourceForms.Items.Cast<ListViewItem>().Where(k => k.Checked).ToList();
+
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Transfer forms selected",
                 Work = (worker, args) =>
                 {
-                   
-                    
+                    try
+                    {
+                        foreach (var formSelected in formsSourceSelected)
+                        {
+                            var entitySourceForm = new Entity("msdynmkt_marketingform");
+                            var entityTargetForm = new Entity("msdynmkt_marketingform");
+                            var entitySourceRedirectForm = new Entity("msdynmkt_marketingform");
+                            var entityTargetRedirectForm = new Entity("msdynmkt_marketingform");
 
-                    //args.Result = formsTarget;
+                            if (cb_TransfersFormsRedirect.Checked)
+                            {
+                                entitySourceForm = _entitiesSourceForms.Select(k => k.Key).Where(k => k.Attributes["msdynmkt_name"].ToString() == formSelected.Text).FirstOrDefault();
+                                entitySourceRedirectForm = _entitiesSourceForms.Select(k => k.Value).Where(k => k.Attributes["msdynmkt_name"].ToString() == formSelected.SubItems[1].Text).FirstOrDefault();
+                                entityTargetForm = _entitiesTargetForms.Select(k => k.Key).Where(k => k.Attributes["msdynmkt_name"].ToString() == formSelected.Text).FirstOrDefault();
+                                entityTargetRedirectForm = _entitiesTargetForms.Select(k => k.Value).Where(k => k.Attributes["msdynmkt_name"].ToString() == formSelected.SubItems[1].Text).FirstOrDefault();
+                            }
+                            else
+                            {
+                                entitySourceForm = _entitiesSourceForms.Select(k => k.Key).Where(k => k.Attributes["msdynmkt_name"].ToString() == formSelected.Text).FirstOrDefault();
+                                entitySourceRedirectForm = null;
+                                entityTargetForm = _entitiesTargetForms.Select(k => k.Key).Where(k => k.Attributes["msdynmkt_name"].ToString() == formSelected.Text).FirstOrDefault();
+                                entityTargetRedirectForm = null;
+                            }
+                            TransferForm(entitySourceForm, entityTargetForm, entitySourceRedirectForm, entityTargetRedirectForm);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }                    
+
+                    args.Result = formsSourceSelected;
                 },
                 PostWorkCallBack = (args) =>
                 {
@@ -466,6 +522,110 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                     GetForms(false);
                 }
             });
+        }
+
+        private Boolean TransferForm(Entity formSource, Entity formTarget, Entity formSourceRedirect, Entity formTargetRedirect)
+        {
+            Guid recordCrearteOrUpdate = Guid.Empty;
+
+            try
+            {
+                //Update form redirect in target
+                if (formSourceRedirect != null && formTargetRedirect != null)
+                {
+                    try
+                    {
+                        formSourceRedirect.Id = formTargetRedirect.Id;
+                        formSourceRedirect.Attributes["msdynmkt_marketingformid"] = formTargetRedirect.Id;
+                        formSourceRedirect["statuscode"] = cb_TransfersFormsInDraft.Checked ? new OptionSetValue(1) : formSourceRedirect["statuscode"];
+
+                        _targetService.Update(formSourceRedirect);
+                        recordCrearteOrUpdate = formSourceRedirect.Id;
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError(string.Format("TransferForm Update Form Target Redirect Error : {0}", ex.Message));
+                    }
+                }
+                else if (formSourceRedirect != null && formTargetRedirect == null)
+                {
+                    //Create form redirect in target
+                    try
+                    {
+                        formSourceRedirect.Id = Guid.NewGuid();
+                        formSourceRedirect.Attributes["msdynmkt_marketingformid"] = formSourceRedirect.Id;
+                        formSourceRedirect["statuscode"] = cb_TransfersFormsInDraft.Checked ? new OptionSetValue(1) : formSourceRedirect["statuscode"];
+                        recordCrearteOrUpdate = _targetService.Create(formSourceRedirect);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError(string.Format("TransferForm Create Form Source Redirect Error : {0}", ex.Message));
+                    }
+                }
+
+                //Update form source in target
+                if (formSource != null && formTarget != null)
+                {
+                    try
+                    {
+                        formSource.Id = formTarget.Id;
+                        formSource.Attributes["msdynmkt_marketingformid"] = formTarget.Id;
+                        formSource["statuscode"] = cb_TransfersFormsInDraft.Checked ? new OptionSetValue(1) : formSource["statuscode"];
+
+                        //Associate form redirect previously created or updated
+                        if (recordCrearteOrUpdate != Guid.Empty)
+                        {
+                            formSource["msdynmkt_redirecturl"] = formSource.Attributes["msdynmkt_redirecturl"].ToString().Replace(formSource.Attributes["msdynmkt_redirecturl"].ToString().Split('/').Last(), recordCrearteOrUpdate.ToString());
+                        }
+
+                        _targetService.Update(formSource);
+                        recordCrearteOrUpdate = formSource.Id;
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError(string.Format("TransferForm Update Form Target Error : {0}", ex.Message));
+                    }
+                }
+                else if (formSource != null && formTarget == null)
+                {
+                    //Create form source in target
+                    try
+                    {
+                        formSource.Id = Guid.NewGuid();
+                        formSource.Attributes["msdynmkt_marketingformid"] = formSource.Id;
+                        formSource["statuscode"] = cb_TransfersFormsInDraft.Checked ? new OptionSetValue(1) : formSource["statuscode"];
+
+                        //Associate form redirect previously created or updated
+                        if (recordCrearteOrUpdate != Guid.Empty)
+                        {
+                            formSource["msdynmkt_redirecturl"] = formSource.Attributes["msdynmkt_redirecturl"].ToString().Replace(formSource.Attributes["msdynmkt_redirecturl"].ToString().Split('/').Last(), recordCrearteOrUpdate.ToString());
+                        }
+
+                        recordCrearteOrUpdate = _targetService.Create(formSource);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError(string.Format("TransferForm Create Form Source Error : {0}", ex.Message));
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogError(string.Format("TransferForm Error : {0}", ex.Message));
+            }
+
+            if (formSource != null)
+                LogInfo(string.Format("TransferForm : Form {0} {1} in Target", formSource.Attributes["msdynmkt_name"].ToString(), recordCrearteOrUpdate != Guid.Empty ? "created/updated" : "not created/updated"));
+            if(formSourceRedirect != null)
+                LogInfo(string.Format("TransferForm : Form Redirect {0} {1} in Target", formSourceRedirect.Attributes["msdynmkt_name"].ToString(), recordCrearteOrUpdate != Guid.Empty ? "created/updated" : "not created/updated"));
+
+            return recordCrearteOrUpdate != Guid.Empty;
+        }
+
+        private void lv_SourceForms_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            SummaryStatus();
         }
     }
 }
