@@ -28,16 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TransferRTMFormsBetweenEnvironmentsPluginControl));
             this.toolStripMenu = new System.Windows.Forms.ToolStrip();
+            this.bt_LoadForms = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsbClose = new System.Windows.Forms.ToolStripButton();
             this.tssSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.bt_TransferForms = new System.Windows.Forms.ToolStripButton();
+            this.bt_Donate = new System.Windows.Forms.ToolStripButton();
             this.p_control = new System.Windows.Forms.Panel();
             this.p_Forms = new System.Windows.Forms.Panel();
             this.p_ListViewForms = new System.Windows.Forms.Panel();
             this.gb_SourceForms = new System.Windows.Forms.GroupBox();
             this.lv_SourceForms = new System.Windows.Forms.ListView();
+            this.imgList = new System.Windows.Forms.ImageList(this.components);
             this.gb_TargetForms = new System.Windows.Forms.GroupBox();
             this.lv_TargetForms = new System.Windows.Forms.ListView();
             this.p_Status = new System.Windows.Forms.Panel();
@@ -53,9 +58,6 @@
             this.l_environmentSource = new System.Windows.Forms.Label();
             this.l_environmentTargetValue = new System.Windows.Forms.Label();
             this.bt_SelectTarget = new System.Windows.Forms.Button();
-            this.bt_LoadForms = new System.Windows.Forms.ToolStripButton();
-            this.bt_TransferForms = new System.Windows.Forms.ToolStripButton();
-            this.bt_Donate = new System.Windows.Forms.ToolStripButton();
             this.toolStripMenu.SuspendLayout();
             this.p_control.SuspendLayout();
             this.p_Forms.SuspendLayout();
@@ -86,6 +88,16 @@
             this.toolStripMenu.TabIndex = 4;
             this.toolStripMenu.Text = "toolStrip1";
             // 
+            // bt_LoadForms
+            // 
+            this.bt_LoadForms.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.bt_LoadForms.Image = ((System.Drawing.Image)(resources.GetObject("bt_LoadForms.Image")));
+            this.bt_LoadForms.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.bt_LoadForms.Name = "bt_LoadForms";
+            this.bt_LoadForms.Size = new System.Drawing.Size(71, 28);
+            this.bt_LoadForms.Text = "Load forms";
+            this.bt_LoadForms.Click += new System.EventHandler(this.bt_LoadForms_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -103,6 +115,26 @@
             // 
             this.tssSeparator1.Name = "tssSeparator1";
             this.tssSeparator1.Size = new System.Drawing.Size(6, 31);
+            // 
+            // bt_TransferForms
+            // 
+            this.bt_TransferForms.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.bt_TransferForms.Enabled = false;
+            this.bt_TransferForms.Image = ((System.Drawing.Image)(resources.GetObject("bt_TransferForms.Image")));
+            this.bt_TransferForms.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.bt_TransferForms.Name = "bt_TransferForms";
+            this.bt_TransferForms.Size = new System.Drawing.Size(138, 28);
+            this.bt_TransferForms.Text = "Transfers forms selected";
+            this.bt_TransferForms.Click += new System.EventHandler(this.bt_TransferForms_Click);
+            // 
+            // bt_Donate
+            // 
+            this.bt_Donate.Image = global::XrmToolBox.TransferFormsRTMEnvironments.Properties.Resources.paypal;
+            this.bt_Donate.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.bt_Donate.Name = "bt_Donate";
+            this.bt_Donate.Size = new System.Drawing.Size(73, 28);
+            this.bt_Donate.Text = "Donate";
+            this.bt_Donate.Click += new System.EventHandler(this.bt_Donate_Click);
             // 
             // p_control
             // 
@@ -156,15 +188,27 @@
             this.lv_SourceForms.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lv_SourceForms.FullRowSelect = true;
             this.lv_SourceForms.HideSelection = false;
+            this.lv_SourceForms.LargeImageList = this.imgList;
             this.lv_SourceForms.Location = new System.Drawing.Point(3, 16);
             this.lv_SourceForms.Margin = new System.Windows.Forms.Padding(5);
             this.lv_SourceForms.Name = "lv_SourceForms";
+            this.lv_SourceForms.OwnerDraw = true;
             this.lv_SourceForms.Size = new System.Drawing.Size(394, 510);
             this.lv_SourceForms.TabIndex = 0;
             this.lv_SourceForms.UseCompatibleStateImageBehavior = false;
             this.lv_SourceForms.View = System.Windows.Forms.View.Details;
+            this.lv_SourceForms.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.lv_DrawColumnHeader);
+            this.lv_SourceForms.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.lv_ShowFormIcon_DrawSubItem);
             this.lv_SourceForms.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lv_SourceForms_ItemChecked);
             this.lv_SourceForms.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lv_ItemSelectionChanged);
+            this.lv_SourceForms.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lv_SourceForms_MouseClick);
+            this.lv_SourceForms.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lv_SourceForms_MouseMove);
+            // 
+            // imgList
+            // 
+            this.imgList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgList.ImageStream")));
+            this.imgList.TransparentColor = System.Drawing.Color.Transparent;
+            this.imgList.Images.SetKeyName(0, "showForm.jpg");
             // 
             // gb_TargetForms
             // 
@@ -183,14 +227,20 @@
             this.lv_TargetForms.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lv_TargetForms.FullRowSelect = true;
             this.lv_TargetForms.HideSelection = false;
+            this.lv_TargetForms.LargeImageList = this.imgList;
             this.lv_TargetForms.Location = new System.Drawing.Point(3, 16);
             this.lv_TargetForms.Margin = new System.Windows.Forms.Padding(5);
             this.lv_TargetForms.Name = "lv_TargetForms";
+            this.lv_TargetForms.OwnerDraw = true;
             this.lv_TargetForms.Size = new System.Drawing.Size(394, 510);
             this.lv_TargetForms.TabIndex = 1;
             this.lv_TargetForms.UseCompatibleStateImageBehavior = false;
             this.lv_TargetForms.View = System.Windows.Forms.View.Details;
+            this.lv_TargetForms.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.lv_DrawColumnHeader);
+            this.lv_TargetForms.DrawSubItem += new System.Windows.Forms.DrawListViewSubItemEventHandler(this.lv_ShowFormIcon_DrawSubItem);
             this.lv_TargetForms.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lv_ItemSelectionChanged);
+            this.lv_TargetForms.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lv_TargetForms_MouseClick);
+            this.lv_TargetForms.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lv_TargetForms_MouseMove);
             // 
             // p_Status
             // 
@@ -337,36 +387,6 @@
             this.bt_SelectTarget.UseVisualStyleBackColor = true;
             this.bt_SelectTarget.Click += new System.EventHandler(this.bt_SelectTarget_Click);
             // 
-            // bt_LoadForms
-            // 
-            this.bt_LoadForms.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.bt_LoadForms.Image = ((System.Drawing.Image)(resources.GetObject("bt_LoadForms.Image")));
-            this.bt_LoadForms.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.bt_LoadForms.Name = "bt_LoadForms";
-            this.bt_LoadForms.Size = new System.Drawing.Size(71, 28);
-            this.bt_LoadForms.Text = "Load forms";
-            this.bt_LoadForms.Click += new System.EventHandler(this.bt_LoadForms_Click);
-            // 
-            // bt_TransferForms
-            // 
-            this.bt_TransferForms.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.bt_TransferForms.Enabled = false;
-            this.bt_TransferForms.Image = ((System.Drawing.Image)(resources.GetObject("bt_TransferForms.Image")));
-            this.bt_TransferForms.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.bt_TransferForms.Name = "bt_TransferForms";
-            this.bt_TransferForms.Size = new System.Drawing.Size(138, 28);
-            this.bt_TransferForms.Text = "Transfers forms selected";
-            this.bt_TransferForms.Click += new System.EventHandler(this.bt_TransferForms_Click);
-            // 
-            // bt_Donate
-            // 
-            this.bt_Donate.Image = global::XrmToolBox.TransferFormsRTMEnvironments.Properties.Resources.paypal;
-            this.bt_Donate.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.bt_Donate.Name = "bt_Donate";
-            this.bt_Donate.Size = new System.Drawing.Size(73, 28);
-            this.bt_Donate.Text = "Donate";
-            this.bt_Donate.Click += new System.EventHandler(this.bt_Donate_Click);
-            // 
             // TransferRTMFormsBetweenEnvironmentsPluginControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -427,5 +447,6 @@
         private System.Windows.Forms.Panel p_FormsSourceStatus;
         private System.Windows.Forms.Label l_FormsSourceStatus;
         private System.Windows.Forms.ToolStripButton bt_Donate;
+        private System.Windows.Forms.ImageList imgList;
     }
 }

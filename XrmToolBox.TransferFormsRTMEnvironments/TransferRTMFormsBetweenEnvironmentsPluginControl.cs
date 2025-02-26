@@ -14,7 +14,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Workflow.Activities;
 using XrmToolBox.Extensibility;
+using XrmToolBox.TransferFormsRTMEnvironments;
 using static System.Windows.Forms.ListViewItem;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
@@ -27,6 +29,7 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
         private Dictionary<Entity, Entity> _entitiesSourceForms = new Dictionary<Entity, Entity>();
 
         private IOrganizationService _targetService;
+        private ConnectionDetail _targetConnectionDetail;
         private List<ListViewItem> _targetForms = new List<ListViewItem>();
         private Dictionary<Entity, Entity> _entitiesTargetForms = new Dictionary<Entity, Entity>();
 
@@ -44,7 +47,7 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
 
         private void TransferFormsRTMEnvironmentsPluginControl_Load(object sender, EventArgs e)
         {
-            ShowInfoNotification("This is a notification that can lead to XrmToolBox repository", new Uri("https://github.com/MscrmTools/XrmToolBox"));
+            ShowInfoNotification("If you detect any error or problem in the tool, please let us know so we can resolve it as soon as possible.", new Uri("https://github.com/AXAZURE/XrmToolBox.TransferRTMFormsBetweenEnvironments/issues"));
 
             // Loads or creates the settings for the plugin
             if (!SettingsManager.Instance.TryLoad(GetType(), out mySettings))
@@ -68,7 +71,7 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
 
         private void bt_LoadForms_Click(object sender, EventArgs e)
         {
-            GetForms(false);
+            GetForms(false, true);
         }
 
         private void Prepare()
@@ -80,20 +83,25 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
             gb_settings.Width = w;
 
             //Source forms
-            int wSourceForms = ((gb_SourceForms.ClientSize.Width - GetVScrollBarWidth()) / 2) - 100;
+            int wSourceForms = ((gb_SourceForms.ClientSize.Width - GetVScrollBarWidth()) / 2) - 280;
 
             lv_SourceForms.Columns.Clear();
-            lv_SourceForms.Columns.Add("Form Name", wSourceForms);
+            lv_SourceForms.Columns.Add("Form Name (Cross-environment form key field)", wSourceForms);
+            lv_SourceForms.Columns.Add("Preview form", 80);
             lv_SourceForms.Columns.Add("Form Redirect", wSourceForms);
+            lv_SourceForms.Columns.Add("Preview form redirect", 100);
             lv_SourceForms.Columns.Add("Form Status", 100);
             lv_SourceForms.Columns.Add("Comparer Status", 100);
+            
 
             //Target forms
-            int wTargetForms = ((gb_TargetForms.ClientSize.Width - GetVScrollBarWidth()) / 2) - 100;
+            int wTargetForms = ((gb_TargetForms.ClientSize.Width - GetVScrollBarWidth()) / 2) - 280;
 
             lv_TargetForms.Columns.Clear();
-            lv_TargetForms.Columns.Add("Form Name", wTargetForms);
+            lv_TargetForms.Columns.Add("Form Name Cross-environment form key field)", wTargetForms);
+            lv_TargetForms.Columns.Add("Preview form", 80);
             lv_TargetForms.Columns.Add("Form Redirect", wTargetForms);
+            lv_TargetForms.Columns.Add("Preview form redirect", 100);
             lv_TargetForms.Columns.Add("Form Status", 100);
             lv_TargetForms.Columns.Add("Transfer Status", 100);
 
@@ -142,12 +150,12 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
             return SystemInformation.VerticalScrollBarWidth;
         }
 
-        private void GetForms(bool onlyTarget)
+        private void GetForms(bool onlyTarget, bool showMessagesReload)
         {
             var loadSourceForms = true;
             var loadTargetForms = true;
 
-            if (onlyTarget == false && lv_SourceForms != null && lv_SourceForms.Items.Count > 0)
+            if (onlyTarget == false && lv_SourceForms != null && lv_SourceForms.Items.Count > 0 && showMessagesReload)
             {            
                 var openSelectedSource = MessageBox.Show("Do you want to reload the forms from the source environment?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if(openSelectedSource == DialogResult.No)
@@ -186,7 +194,7 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                         if (formsSource != null && formsSource.Entities != null && formsSource.Entities.Count > 0)
                         {
                             List<String> formsNameRedirect = new List<String>();
-
+                            var count = 0;
                             foreach (var entity in formsSource.Entities)
                             {
                                 if (!formsNameRedirect.Contains(entity.Attributes["msdynmkt_name"].ToString()))
@@ -206,9 +214,9 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                                     else
                                     {
                                         _entitiesSourceForms.Add(entity, null);
-                                    }                                    
-
-                                    _sourceForms.Add(new ListViewItem(new string[] { entity.Attributes["msdynmkt_name"].ToString(), string.IsNullOrEmpty(formRedirect) ? "" : formRedirect, entity.FormattedValues["statuscode"].ToString(), FORM_STATUS_NOTCONNECT_TARGET }) { ForeColor = Color.Red });
+                                    }
+                                                                        
+                                    _sourceForms.Add(new ListViewItem(new string[] { entity.Attributes["msdynmkt_name"].ToString(), "", string.IsNullOrEmpty(formRedirect) ? "" : formRedirect, "", entity.FormattedValues["statuscode"].ToString(), FORM_STATUS_NOTCONNECT_TARGET}) { ForeColor = Color.Red, ImageIndex = 0 });
                                 }
                             }
                         }
@@ -217,7 +225,7 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                             MessageBox.Show("No forms found in the source environment", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
 
-                        args.Result = formsSource;
+                        args.Result = _sourceForms;
                     },
                     PostWorkCallBack = (args) =>
                     {
@@ -225,135 +233,129 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                         {
                             MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
-                        //var result = args.Result as EntityCollection;
-                        //if (result != null)
-                        //{
-                        //    //lv_SourceForms.Items.AddRange(_sourceForms.OrderBy(k => k.Text).ToArray());
-                        //    //MessageBox.Show($"Found {result.Entities.Count} forms");
-                        //}
-                    }
-                });
-            }
 
-            if (lv_TargetForms != null && lv_TargetForms.Items.Count > 0)
-            {
-                var openSelectedSource = MessageBox.Show("Do you want to reload the forms from the target environment?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (openSelectedSource == DialogResult.No)
-                {
-                    loadTargetForms = false;
-                    if (_sourceForms.Count > 0)
-                    {
-                        lv_SourceForms.Items.Clear();
-                        lv_SourceForms.Items.AddRange(_sourceForms.OrderBy(k => k.Text).ToArray());
-                        lv_SourceForms.Items.Cast<ListViewItem>().All(k => k.Checked = true);
-                    }
-                }
-            }
-
-            if (_targetService != null && loadTargetForms)
-            {
-                _targetForms.Clear();
-                _entitiesTargetForms.Clear();
-
-                WorkAsync(new WorkAsyncInfo
-                {
-                    Message = "Getting forms from the target",
-                    Work = (worker, args) =>
-                    {
-                        EntityCollection formsTarget = _targetService.RetrieveMultiple(new QueryExpression("msdynmkt_marketingform")
+                        if (lv_TargetForms != null && lv_TargetForms.Items.Count > 0 && showMessagesReload)
                         {
-                            ColumnSet = new ColumnSet(true),
-                            Criteria =
+                            var openSelectedSource = MessageBox.Show("Do you want to reload the forms from the target environment?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                            if (openSelectedSource == DialogResult.No)
+                            {
+                                loadTargetForms = false;
+                                if (_sourceForms.Count > 0)
+                                {
+                                    lv_SourceForms.Items.Clear();
+                                    lv_SourceForms.Items.AddRange(_sourceForms.OrderBy(k => k.Text).ToArray());
+                                    lv_SourceForms.Items.Cast<ListViewItem>().All(k => k.Checked = true);
+                                }
+                            }
+                        }
+
+                        if (_targetService != null && loadTargetForms)
+                        {
+                            _targetForms.Clear();
+                            _entitiesTargetForms.Clear();
+
+                            WorkAsync(new WorkAsyncInfo
+                            {
+                                Message = "Getting forms from the target",
+                                Work = (worker, argsTarget) =>
+                                {
+                                    EntityCollection formsTarget = _targetService.RetrieveMultiple(new QueryExpression("msdynmkt_marketingform")
+                                    {
+                                        ColumnSet = new ColumnSet(true),
+                                        Criteria =
                             {
                                 Conditions =
                                 {
                                     new ConditionExpression("ismanaged", ConditionOperator.Equal, false)
                                 }
                             },
-                            Orders =
+                                        Orders =
                             {
                                 new OrderExpression("msdynmkt_redirecturl", OrderType.Descending)
                             }
-                        });
+                                    });
 
 
-                        if (formsTarget != null && formsTarget.Entities != null && formsTarget.Entities.Count > 0)
-                        {
-                            List<String> formsNameRedirect = new List<String>();
-
-                            foreach (var entity in formsTarget.Entities)
-                            {
-                                if (!formsNameRedirect.Contains(entity.Attributes["msdynmkt_name"].ToString()))
-                                {
-                                    var existFormInSource = _sourceForms.Exists(k => k.Text == entity.Attributes["msdynmkt_name"].ToString());
-                                    if (!existFormInSource)
+                                    if (formsTarget != null && formsTarget.Entities != null && formsTarget.Entities.Count > 0)
                                     {
-                                        foreach (var formInSource in _sourceForms)
+                                        List<String> formsNameRedirect = new List<String>();
+
+                                        foreach (var entity in formsTarget.Entities)
                                         {
-                                            var subItems = formInSource.SubItems;
-                                            foreach (ListViewSubItem subItem in subItems)
+                                            if (!formsNameRedirect.Contains(entity.Attributes["msdynmkt_name"].ToString()))
                                             {
-                                                if (subItem.Text == entity.Attributes["msdynmkt_name"].ToString())
+                                                var existFormInSource = _sourceForms.Exists(k => k.Text == entity.Attributes["msdynmkt_name"].ToString());
+                                                if (!existFormInSource)
                                                 {
-                                                    existFormInSource = true;
-                                                    break;
+                                                    foreach (var formInSource in _sourceForms)
+                                                    {
+                                                        var subItems = formInSource.SubItems;
+                                                        foreach (ListViewSubItem subItem in subItems)
+                                                        {
+                                                            if (subItem.Text == entity.Attributes["msdynmkt_name"].ToString())
+                                                            {
+                                                                existFormInSource = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
                                                 }
+
+                                                var formRedirect = string.Empty;
+
+                                                if (entity.Contains("msdynmkt_redirecturl") && !String.IsNullOrEmpty(entity.Attributes["msdynmkt_redirecturl"].ToString()))
+                                                {
+                                                    var related = formsTarget.Entities.Where(k => k.Id == Guid.Parse(entity.Attributes["msdynmkt_redirecturl"].ToString().Split('/').Last())).FirstOrDefault();
+                                                    if (related != null)
+                                                    {
+                                                        formRedirect = related.Attributes["msdynmkt_name"].ToString();
+                                                        formsNameRedirect.Add(formRedirect);
+                                                        _entitiesTargetForms.Add(entity, related);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    _entitiesTargetForms.Add(entity, null);
+                                                }
+
+                                                _targetForms.Add(new ListViewItem(new string[] { entity.Attributes["msdynmkt_name"].ToString(), "", string.IsNullOrEmpty(formRedirect) ? "" : formRedirect, "", entity.FormattedValues["statuscode"].ToString(), existFormInSource ? FORM_STATUS_UPDATED : FORM_STATUS_NEW }) { ForeColor = existFormInSource ? Color.Red : Color.Green, ImageIndex = 0 });
                                             }
-                                        }
-                                    }
-
-                                    var formRedirect = string.Empty;
-
-                                    if (entity.Contains("msdynmkt_redirecturl") && !String.IsNullOrEmpty(entity.Attributes["msdynmkt_redirecturl"].ToString()))
-                                    {
-                                        var related = formsTarget.Entities.Where(k => k.Id == Guid.Parse(entity.Attributes["msdynmkt_redirecturl"].ToString().Split('/').Last())).FirstOrDefault();
-                                        if (related != null)
-                                        {
-                                            formRedirect = related.Attributes["msdynmkt_name"].ToString();
-                                            formsNameRedirect.Add(formRedirect);
-                                            _entitiesTargetForms.Add(entity, related);
                                         }
                                     }
                                     else
                                     {
-                                        _entitiesTargetForms.Add(entity, null);
+                                        MessageBox.Show("No forms found in the source environment", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     }
 
-                                    _targetForms.Add(new ListViewItem(new string[] { entity.Attributes["msdynmkt_name"].ToString(), string.IsNullOrEmpty(formRedirect) ? "" : formRedirect, entity.FormattedValues["statuscode"].ToString(), existFormInSource ? FORM_STATUS_UPDATED : FORM_STATUS_NEW }) { ForeColor = existFormInSource ? Color.Red : Color.Green });
+                                    argsTarget.Result = _targetForms;
+                                },
+                                PostWorkCallBack = (argsTarget) =>
+                                {
+                                    if (argsTarget.Error != null)
+                                    {
+                                        MessageBox.Show(argsTarget.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    }
+
+                                    SetComparerFormsSourceFromTarget();
                                 }
-                            }
+                            });
                         }
                         else
                         {
-                            MessageBox.Show("No forms found in the source environment", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                            if (loadTargetForms)
+                            {
+                                var openSelectedTarget = MessageBox.Show("Do you want to select a target environment?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                                if (openSelectedTarget == DialogResult.Yes)
+                                {
+                                    AddAdditionalOrganization();
+                                    GetForms(false, false);
+                                }
+                            }
 
-                        args.Result = formsTarget;
-                    },
-                    PostWorkCallBack = (args) =>
-                    {
-                        if (args.Error != null)
-                        {
-                            MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            SetComparerFormsSourceFromTarget();
                         }
-
-                        SetComparerFormsSourceFromTarget();
                     }
                 });
-            }
-            else
-            {
-                if (loadTargetForms)
-                {
-                    var openSelectedTarget = MessageBox.Show("Do you want to select a target environment?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if (openSelectedTarget == DialogResult.Yes)
-                    {
-                        AddAdditionalOrganization();
-                        GetForms(true);
-                    }
-                }
-
-                SetComparerFormsSourceFromTarget();
             }
         }
 
@@ -375,12 +377,12 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                     if (!exist)
                     {
                         itemSource.ForeColor = Color.Green;
-                        itemSource.SubItems[3].Text = FORM_STATUS_NEW;
+                        itemSource.SubItems[5].Text = FORM_STATUS_NEW;
                     }
                     else
                     {
                         itemSource.ForeColor = Color.Black;
-                        itemSource.SubItems[3].Text = FORM_STATUS_UPDATED;
+                        itemSource.SubItems[5].Text = FORM_STATUS_UPDATED;
                     }
                 }
                 lv_SourceForms.Items.Clear();
@@ -457,10 +459,10 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
             // For now, only support one target org
             if (e.Action.Equals(NotifyCollectionChangedAction.Add))
             {
-                var detail = (ConnectionDetail)e.NewItems[0];
-                _targetService = detail.ServiceClient;
+                _targetConnectionDetail = (ConnectionDetail)e.NewItems[0];
+                _targetService = _targetConnectionDetail.ServiceClient;
 
-                l_environmentTargetValue.Text = detail.ConnectionName;
+                l_environmentTargetValue.Text = _targetConnectionDetail.ConnectionName;
                 l_environmentTargetValue.ForeColor = Color.Green;
             }
         }
@@ -492,9 +494,9 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                             if (cb_TransfersFormsRedirect.Checked)
                             {
                                 entitySourceForm = _entitiesSourceForms.Select(k => k.Key).Where(k => k.Attributes["msdynmkt_name"].ToString() == formSelected.Text).FirstOrDefault();
-                                entitySourceRedirectForm = _entitiesSourceForms.Select(k => k.Value).Where(k => k.Attributes["msdynmkt_name"].ToString() == formSelected.SubItems[1].Text).FirstOrDefault();
+                                entitySourceRedirectForm = _entitiesSourceForms.Where(k => k.Value != null).Select(k => k.Value).Where(k => k.Attributes["msdynmkt_name"].ToString() == formSelected.SubItems[1].Text).FirstOrDefault();
                                 entityTargetForm = _entitiesTargetForms.Select(k => k.Key).Where(k => k.Attributes["msdynmkt_name"].ToString() == formSelected.Text).FirstOrDefault();
-                                entityTargetRedirectForm = _entitiesTargetForms.Select(k => k.Value).Where(k => k.Attributes["msdynmkt_name"].ToString() == formSelected.SubItems[1].Text).FirstOrDefault();
+                                entityTargetRedirectForm = _entitiesTargetForms.Where(k => k.Value != null).Select(k => k.Value).Where(k => k.Attributes["msdynmkt_name"].ToString() == formSelected.SubItems[1].Text).FirstOrDefault();
                             }
                             else
                             {
@@ -517,9 +519,18 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                 {
                     if (args.Error != null)
                     {
-                        MessageBox.Show(args.Error.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("An error occurred while transferring the selected forms to the target environment, check the logs to see the problem.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                    GetForms(false);
+                    else
+                    {
+                        MessageBox.Show($"The selected forms have been successfully transferred to the target environment", "Transfer of forms", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        var openSelectedSource = MessageBox.Show("Do you want to reload the forms from the source and target environment?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        if (openSelectedSource == DialogResult.Yes)
+                        {
+                            GetForms(false, false);
+                        }
+                    }                
                 }
             });
         }
@@ -577,6 +588,10 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
                         {
                             formSource["msdynmkt_redirecturl"] = formSource.Attributes["msdynmkt_redirecturl"].ToString().Replace(formSource.Attributes["msdynmkt_redirecturl"].ToString().Split('/').Last(), recordCrearteOrUpdate.ToString());
                         }
+                        else if (formTarget.Contains("msdynmkt_redirecturl"))
+                        {
+                            formSource["msdynmkt_redirecturl"] = formTarget.Attributes["msdynmkt_redirecturl"];
+                        }
 
                         _targetService.Update(formSource);
                         recordCrearteOrUpdate = formSource.Id;
@@ -626,6 +641,167 @@ namespace XrmToolBox.TransferRTMFormsBetweenEnvironments
         private void lv_SourceForms_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             SummaryStatus();
+        }
+
+        private void lv_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            e.DrawDefault = true;
+        }
+
+        private void lv_ShowFormIcon_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        {
+            if (e.ColumnIndex == 1 || e.ColumnIndex == 3) // Índice de la columna donde quieres mostrar la imagen
+            {
+                
+                if (e.ColumnIndex == 3 && string.IsNullOrEmpty(e.Item.SubItems[2].Text))
+                {
+                    e.DrawDefault = true;
+                }
+                else
+                {
+                    Image image = imgList.Images[e.Item.ImageIndex];
+                    int x = e.Bounds.Left + (e.Bounds.Width - image.Width) / 2;
+                    int y = e.Bounds.Top + (e.Bounds.Height - image.Height) / 2;
+                    e.Graphics.DrawImage(image, x, y);
+
+                    e.SubItem.Tag = new Rectangle(x, y, image.Width, image.Height);
+                }               
+            }
+            else
+            {
+                e.DrawDefault = true;
+            }
+        }
+
+        private void lv_SourceForms_MouseClick(object sender, MouseEventArgs e)
+        {
+            ListViewItem item = lv_SourceForms.GetItemAt(e.X, e.Y);
+            if (item != null)
+            {
+                ListViewHitTestInfo hitTest = lv_SourceForms.HitTest(e.X, e.Y);
+                int index = hitTest.Item.SubItems.IndexOf(hitTest.SubItem);
+                if (hitTest.Item != null && hitTest.SubItem != null && hitTest.SubItem.Tag != null && (index == 1 || index == 3))
+                {
+                    Rectangle rect = (Rectangle)hitTest.SubItem.Tag;
+                    if (rect.Contains(e.Location))
+                    {
+                        ShowFormSource(item, index);
+                    }
+                }
+            }
+        }
+
+        private void lv_SourceForms_MouseMove(object sender, MouseEventArgs e)
+        {
+            ListViewItem item = lv_SourceForms.GetItemAt(e.X, e.Y);
+            if (item != null)
+            {
+                ListViewHitTestInfo hitTest = lv_SourceForms.HitTest(e.X, e.Y);
+                if (hitTest.Item != null && hitTest.SubItem != null && hitTest.SubItem.Tag != null && (hitTest.Item.SubItems.IndexOf(hitTest.SubItem) == 1 || hitTest.Item.SubItems.IndexOf(hitTest.SubItem) == 3))
+                {
+                    Rectangle rect = (Rectangle)hitTest.SubItem.Tag;
+                    if (rect.Contains(e.Location))
+                    {
+                        lv_SourceForms.Cursor = Cursors.Hand;
+                    }
+                    else
+                    {
+                        lv_SourceForms.Cursor = Cursors.Default;
+                    }
+                }
+                else
+                {
+                    lv_SourceForms.Cursor = Cursors.Default;
+                }
+            }
+            else
+            {
+                lv_SourceForms.Cursor = Cursors.Default;
+            }
+        }
+
+        private void ShowFormSource(ListViewItem item, int index)
+        {
+            var formName = index == 1 ? item.Text : item.SubItems[2].Text;
+            var urlEnviroment = ConnectionDetail.WebApplicationUrl;
+            var formId = _entitiesSourceForms.Where(k => index == 1 ? (k.Key.Attributes["msdynmkt_name"].ToString() == formName) : (k.Value != null && k.Value.Attributes["msdynmkt_name"].ToString() == formName)).Select(k => index == 1 ? k.Key.Id : k.Value.Id).FirstOrDefault();               
+
+            if (formId != null) {
+                
+
+                var openSelectedTarget = MessageBox.Show("A tab of the form will open in your browser. You will need to be logged into the form environment to view it. Do you want to continue?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (openSelectedTarget == DialogResult.Yes)
+                {
+                    var urlForm = $"{urlEnviroment}/main.aspx?etn=msdynmkt_marketingform&pagetype=entityrecord&forceUCI=1&navbar=off&id={formId}";
+                    Process.Start(urlForm);
+                }                
+            } 
+        }
+
+        private void lv_TargetForms_MouseClick(object sender, MouseEventArgs e)
+        {
+            ListViewItem item = lv_TargetForms.GetItemAt(e.X, e.Y);
+            if (item != null)
+            {
+                ListViewHitTestInfo hitTest = lv_TargetForms.HitTest(e.X, e.Y);
+                int index = hitTest.Item.SubItems.IndexOf(hitTest.SubItem);
+                if (hitTest.Item != null && hitTest.SubItem != null && hitTest.SubItem.Tag != null && (index == 1 || index == 3))
+                {
+                    Rectangle rect = (Rectangle)hitTest.SubItem.Tag;
+                    if (rect.Contains(e.Location))
+                    {
+                        ShowFormTarget(item, index);
+                    }
+                }
+            }
+        }
+
+        private void lv_TargetForms_MouseMove(object sender, MouseEventArgs e)
+        {
+            ListViewItem item = lv_TargetForms.GetItemAt(e.X, e.Y);
+            if (item != null)
+            {
+                ListViewHitTestInfo hitTest = lv_TargetForms.HitTest(e.X, e.Y);
+                if (hitTest.Item != null && hitTest.SubItem != null && hitTest.SubItem.Tag != null && (hitTest.Item.SubItems.IndexOf(hitTest.SubItem) == 1 || hitTest.Item.SubItems.IndexOf(hitTest.SubItem) == 3))
+                {
+                    Rectangle rect = (Rectangle)hitTest.SubItem.Tag;
+                    if (rect.Contains(e.Location))
+                    {
+                        lv_TargetForms.Cursor = Cursors.Hand;
+                    }
+                    else
+                    {
+                        lv_TargetForms.Cursor = Cursors.Default;
+                    }
+                }
+                else
+                {
+                    lv_TargetForms.Cursor = Cursors.Default;
+                }
+            }
+            else
+            {
+                lv_TargetForms.Cursor = Cursors.Default;
+            }
+        }
+
+        private void ShowFormTarget(ListViewItem item, int index)
+        {
+            var formName = index == 1 ? item.Text : item.SubItems[2].Text;
+            var urlEnviroment = _targetConnectionDetail.WebApplicationUrl;
+            var formId = _entitiesTargetForms.Where(k => index == 1 ? (k.Key.Attributes["msdynmkt_name"].ToString() == formName) : (k.Value != null && k.Value.Attributes["msdynmkt_name"].ToString() == formName)).Select(k => index == 1 ? k.Key.Id : k.Value.Id).FirstOrDefault();
+
+            if (formId != null)
+            {
+
+
+                var openSelectedTarget = MessageBox.Show("A tab of the form will open in your browser. You will need to be logged into the form environment to view it. Do you want to continue?", "Attention", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (openSelectedTarget == DialogResult.Yes)
+                {
+                    var urlForm = $"{urlEnviroment}/main.aspx?etn=msdynmkt_marketingform&pagetype=entityrecord&forceUCI=1&navbar=off&id={formId}";
+                    Process.Start(urlForm);
+                }
+            }
         }
     }
 }

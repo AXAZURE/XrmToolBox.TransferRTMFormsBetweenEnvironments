@@ -121,6 +121,9 @@
   <data name="paypal" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\paypal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="showForm" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\showForm.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Transfer_RTM_Forms_between_Environments" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Transfer RTM Forms between Environments.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
