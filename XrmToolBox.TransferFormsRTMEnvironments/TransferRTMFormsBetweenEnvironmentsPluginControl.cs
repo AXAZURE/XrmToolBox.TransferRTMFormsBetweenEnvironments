@@ -135,7 +135,7 @@ namespace TransferFormsRTMEnvironments
                     p_FormsSourceStatus.BackColor = Color.White;
                 }
 
-                l_FormsSourceStatus.Text += $" || Will be created: {formsSourceSelected.Select(k => k.SubItems[3]).Where(s => s.Text == FORM_STATUS_NEW).Count()} - Will be Updated: {formsSourceSelected.Select(k => k.SubItems[3]).Where(s => s.Text == FORM_STATUS_UPDATED).Count()}";
+                l_FormsSourceStatus.Text += $" || Will be created: {formsSourceSelected.Select(k => k.SubItems[5]).Where(s => s.Text == FORM_STATUS_NEW).Count()} - Will be Updated: {formsSourceSelected.Select(k => k.SubItems[5]).Where(s => s.Text == FORM_STATUS_UPDATED).Count()}";
 
                 if (formsSourceSelected.Count > 0)
                     bt_TransferForms.Enabled = true;
