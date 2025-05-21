@@ -93,6 +93,16 @@ namespace TransferFormsRTMEnvironments.Properties {
         /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Transfer_RTM_Forms_between_Environments_v1 {
+            get {
+                object obj = ResourceManager.GetObject("Transfer_RTM_Forms_between_Environments_v1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Transfer_RTM_Forms_between_Environments1 {
             get {
                 object obj = ResourceManager.GetObject("Transfer_RTM_Forms_between_Environments1", resourceCulture);

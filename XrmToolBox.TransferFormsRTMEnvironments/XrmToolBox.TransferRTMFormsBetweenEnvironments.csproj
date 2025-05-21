@@ -207,6 +207,9 @@
   <ItemGroup>
     <None Include="Resources\showForm.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Transfer RTM Forms between Environments_v1.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

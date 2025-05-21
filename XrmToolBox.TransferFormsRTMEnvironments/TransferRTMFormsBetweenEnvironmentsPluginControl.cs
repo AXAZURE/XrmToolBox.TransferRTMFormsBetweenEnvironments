@@ -46,7 +46,7 @@ namespace TransferFormsRTMEnvironments
 
         private void TransferFormsRTMEnvironmentsPluginControl_Load(object sender, EventArgs e)
         {
-            ShowInfoNotification("If you detect any error or problem in the tool, please let us know so we can resolve it as soon as possible.", new Uri("https://github.com/AXAZURE/XrmToolBox.TransferFormsRTMEnvironments/issues"));
+            ShowInfoNotification("If you detect any error or problem in the tool, please let us know so we can resolve it as soon as possible.", new Uri("https://github.com/AXAZURE/XrmToolBox.TransferRTMFormsBetweenEnvironments/issues"));
 
             // Loads or creates the settings for the plugin
             if (!SettingsManager.Instance.TryLoad(GetType(), out mySettings))
